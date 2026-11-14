@@ -1,0 +1,58 @@
+name: prompt-studio
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: promptstudio
+      POSTGRES_PASSWORD: promptstudio
+      POSTGRES_DB: promptstudio
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      # Local only, so `npm run dev` on the host can connect. Not exposed publicly.
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U promptstudio -d promptstudio"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Inside Docker, override the DB host to the compose service name.
+      DATABASE_URL: postgres://promptstudio:promptstudio@db:5432/promptstudio
+    depends_on:
+      db:
+        condition: service_healthy
+    # Lets the container reach LM Studio / Ollama running on your host machine.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  # Optional: automatic HTTPS for a public VPS domain (see README, section "Deploy on a VPS").
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    profiles: ["vps"]
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:-promptstudio.rishabchaturvedi.com}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

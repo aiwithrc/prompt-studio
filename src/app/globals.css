@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Design tokens from PRD §12.1 */
+@theme {
+  --color-bg: #120a2a;
+  --color-surface: #1b1238;
+  --color-surface-deep: #120a2a;
+  --color-header: #2a0f4f;
+  --color-border: #33275e;
+  --color-border-strong: #4a2d7a;
+  --color-divider: #2a1f4e;
+  --color-text: #f3eeff;
+  --color-muted: #a99cc9;
+  --color-faint: #7d70a0;
+  --color-accent: #ff8a4c;
+  --color-accent-text: #ff9a5c;
+  --color-lilac: #c79bf2;
+  --color-cyan: #8be7f2;
+  --color-pink: #ff9ab0;
+  --color-danger: #ff8a8a;
+  --color-danger-border: #5a2a4a;
+  --color-btn-secondary: #5b2a86;
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-body: var(--font-manrope), system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+  }
+  body {
+    min-height: 100dvh;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+.hero-gradient {
+  background: linear-gradient(165deg, #ff9a4d 0%, #f0697a 38%, #9a3a9e 72%, #3a1466 100%);
+}
+.result-gradient {
+  background: linear-gradient(160deg, #2a1352, #1b1238 60%);
+}
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+}
+.touch {
+  min-height: 44px;
+}
